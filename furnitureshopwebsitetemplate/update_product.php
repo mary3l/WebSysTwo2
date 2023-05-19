@@ -15,7 +15,7 @@ if (isset($_POST['submit'])) {
     $productname = $_POST['productname'];
     $description = $_POST['description'];
     $quantity = $_POST['quantity'];
-    $curprice = $_POST['curprice'];
+    $ourprice = $_POST['ourprice'];
     $prodcat = $_POST['prodcat'];
 
     // Construct the update query based on the submitted form values
@@ -32,8 +32,8 @@ if (isset($_POST['submit'])) {
     if (!empty($quantity)) {
         $updateFields[] = "quantity='$quantity'";
     }
-    if (!empty($curprice)) {
-        $updateFields[] = "curprice='$curprice'";
+    if (!empty($ourprice)) {
+        $updateFields[] = "ourprice='$ourprice'";
     }
     if (!empty($prodcat)) {
         $updateFields[] = "prodcat='$prodcat'";

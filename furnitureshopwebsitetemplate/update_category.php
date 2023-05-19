@@ -1,7 +1,7 @@
 <?php
 $hostname = "localhost";
-$database = "resto";
-$db_login = "Shopee";
+$database = "Shopee";
+$db_login = "root";
 $db_pass = "";
 $dlink = mysqli_connect($hostname, $db_login, $db_pass, $database) or die("Could not connect");
 

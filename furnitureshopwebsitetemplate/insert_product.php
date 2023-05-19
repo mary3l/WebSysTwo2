@@ -21,7 +21,7 @@ if ($option === 'insert') {
         $selectedCategory = $selectedProduct['prodcat'];
 
         // Insert the new product into the database with the same category
-        $query = "INSERT INTO Products (prodcat, productname, productdesc, productimage, productlink, quantity, lastprice, ourprice) VALUES ('$selectedCategory', 'New Product', 'New Product Description', 'images/newProduct.png', 'products.php', 0, 0, 0)";
+        $query = "INSERT INTO Products (prodcat, productname, productdesc, productimage, productlink, quantity, lastprice, ourprice) VALUES ('$selectedCategory', 'New Product', 'New Product Description', 'images/newproduct.jpg', 'products.php', 0, 0, 0)";
         $insertResult = mysqli_query($dlink, $query);
 
         if ($insertResult) {

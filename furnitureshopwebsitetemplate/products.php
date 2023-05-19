@@ -74,6 +74,12 @@
 			foreach ($categories as $category) {
 				echo "<li><a href='admin_category.php?prodcat=" . urlencode($category) . "'>$category</a></li>";
 			}
+
+			// Add "New Category" button
+			echo '<div class="category">';
+			echo '<button id="new-category-btn" onclick="createNewCategory()">New Category</button>';
+			echo '</div>';
+
 			echo "</ul>";
 
 			// Close the database connection
@@ -172,7 +178,7 @@
 					}
 
 					function handleDeleteProduct(prodid) {
-						var confirmationMessage = "Are you sure you want to delete this product (prodid = " + prodid + ")?";
+						var confirmationMessage = "Are you sure you want to delete 'Product " + prodid + "'?";
 
 						if (confirm(confirmationMessage)) {
 							// Make an AJAX request to delete the product
@@ -214,7 +220,7 @@
 								document.getElementById('productname').value = productDetails.productname;
 								document.getElementById('description').value = productDetails.description;
 								document.getElementById('quantity').value = productDetails.quantity;
-								document.getElementById('curprice').value = productDetails.curprice;
+								document.getElementById('ourprice').value = productDetails.ourprice;
 								document.getElementById('prodcat').value = productDetails.prodcat;
 
 							}
@@ -335,8 +341,8 @@
 									type="number" min="0">
 							</div>
 							<div class="col-md-6">
-								<label for="curprice"></label>
-								<input class="form-control" name="curprice" id="curprice" placeholder="Current Price">
+								<label for="ourprice"></label>
+								<input class="form-control" name="ourprice" id="ourprice" placeholder="Current Price">
 							</div>
 						</div>
 						<br>
@@ -351,7 +357,7 @@
 				</div>
 				<br>
 				<center>
-					<input type="submit" class="btn btn-primary" name="submit" value="Save">
+					<input type="submit" class="btn btn-primary" name="submit" value="Update">
 				</center>
 				</form>
 				<br>

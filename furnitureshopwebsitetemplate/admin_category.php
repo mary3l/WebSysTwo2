@@ -76,8 +76,16 @@
 
                 echo "<li>
                     <a href='admin_category.php?prodcat=" . urlencode($category) . "'>$category</a></li>";
+
+                echo '<div class="category" id="category-' . $row['prodcat'] . '">';
+                echo '<a class="category-link" href="?category=' . $row['prodcat'] . '">' . $row['prodcat'] . '</a>';
+                echo '<button class="edit-category-btn" onclick="editCategoryName(\'' . $row['prodcat'] . '\')">Edit</button>';
+                echo '<button class="delete-category-btn" onclick="confirmDeleteCategory(\'' . $row['prodcat'] . '\')">Delete</button>';
+                echo '</div>';
             }
             echo "</ul>";
+
+
 
             // Close the database connection
             mysqli_close($conn);
@@ -360,7 +368,7 @@
                 </div>
                 <br>
                 <center>
-                    <input type="submit" class="btn btn-primary" name="submit" value="Save">
+                    <input type="submit" class="btn btn-primary" name="submit" value="Update">
                 </center>
                 </form>
                 <br>
