@@ -1,40 +1,41 @@
 <?php
-$hostname = "localhost";
-$database = "Shopee";
-$db_login = "root";
-$db_pass = "";
-$dlink = mysqli_connect($hostname, $db_login, $db_pass, $database) or die("Could not connect");
+// Check if the required parameters are set
+if (isset($_POST['category']) && isset($_POST['newCategoryName'])) {
+    // Retrieve the category and new category name from the request
+    $category = $_POST['category'];
+    $newCategoryName = $_POST['newCategoryName'];
 
-// Retrieve the category ID and new category name from the request
-$categoryId = $_POST['categoryId'];
-$newCategoryName = $_POST['newCategoryName'];
-
-// Check if the category name is empty
-if (empty($newCategoryName)) {
-    // Delete the category and its corresponding products
-    $deleteQuery = "DELETE FROM Products WHERE prodcat = '$categoryId'";
-    $deleteResult = mysqli_query($dlink, $deleteQuery);
-
-    if ($deleteResult) {
-        // Delete successful
-        echo "Category and its products deleted successfully";
-    } else {
-        // Error deleting category and products
-        echo "Error deleting category and its products: " . mysqli_error($dlink);
+    // Connect to the database
+    $hostname = "localhost";
+    $database = "Shopee";
+    $db_login = "root";
+    $db_pass = "";
+    $conn = mysqli_connect($hostname, $db_login, $db_pass, $database);
+    if (!$conn) {
+        $response = array(
+            'success' => false,
+            'message' => 'Connection failed: ' . mysqli_connect_error()
+        );
+        echo json_encode($response);
+        exit;
     }
-} else {
+
     // Update the category name in the database
-    $updateQuery = "UPDATE Products SET prodcat = '$newCategoryName' WHERE prodcat = '$categoryId'";
-    $updateResult = mysqli_query($dlink, $updateQuery);
+    $sql = "UPDATE Products SET prodcat = '$newCategoryName' WHERE prodcat = '$category'";
+    $result = mysqli_query($conn, $sql);
 
-    if ($updateResult) {
-        // Update successful
-        echo "Category name updated successfully";
+    if ($result) {
+        // Category name updated successfully
+        echo 'success';
     } else {
-        // Error updating category name
-        echo "Error updating category name: " . mysqli_error($dlink);
+        // Failed to update category name
+        echo 'error';
     }
-}
 
-mysqli_close($dlink);
+    // Close the database connection
+    mysqli_close($conn);
+} else {
+    // Required parameters not set
+    echo 'error';
+}
 ?>

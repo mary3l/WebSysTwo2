@@ -73,15 +73,7 @@
             // Generate category links
             echo "<ul>";
             foreach ($categories as $category) {
-
-                echo "<li>
-                    <a href='admin_category.php?prodcat=" . urlencode($category) . "'>$category</a></li>";
-
-                echo '<div class="category" id="category-' . $row['prodcat'] . '">';
-                echo '<a class="category-link" href="?category=' . $row['prodcat'] . '">' . $row['prodcat'] . '</a>';
-                echo '<button class="edit-category-btn" onclick="editCategoryName(\'' . $row['prodcat'] . '\')">Edit</button>';
-                echo '<button class="delete-category-btn" onclick="confirmDeleteCategory(\'' . $row['prodcat'] . '\')">Delete</button>';
-                echo '</div>';
+                echo "<li><a href='admin_category.php?prodcat=" . urlencode($category) . "'>$category</a></li>";
             }
             echo "</ul>";
 
@@ -236,79 +228,6 @@
                             }
                         };
                         xhr.send();
-                    }
-                    function editCategoryName(categoryId) {
-                        var categoryElement = document.getElementById('category-' + categoryId);
-                        var categoryLink = categoryElement.querySelector('.category-link');
-                        var editButton = categoryElement.querySelector('.edit-category-btn');
-
-                        if (categoryLink.style.display === 'none') {
-                            // Already in edit mode, save changes
-                            var inputElement = categoryElement.querySelector('input');
-                            var newCategoryName = inputElement.value;
-
-                            if (newCategoryName.trim() !== '') {
-                                // Send an AJAX request to update the category name
-                                var xhr = new XMLHttpRequest();
-                                xhr.open('POST', 'update_category.php', true);
-                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                                xhr.onload = function () {
-                                    if (xhr.status === 200) {
-                                        // Reload the page after updating the category name
-                                        location.reload();
-                                    } else {
-                                        // Display error message if updating category name failed
-                                        console.log('Error updating category name: ' + xhr.responseText);
-                                    }
-                                };
-                                xhr.send('categoryId=' + encodeURIComponent(categoryId) + '&newCategoryName=' + encodeURIComponent(newCategoryName));
-                            }
-                        } else {
-                            // Enter edit mode
-                            categoryLink.style.display = 'none';
-                            editButton.innerText = 'Save';
-
-                            var inputElement = document.createElement('input');
-                            inputElement.type = 'text';
-                            inputElement.value = categoryLink.innerText;
-
-                            categoryElement.appendChild(inputElement);
-                        }
-                    }
-                    function createNewCategory() {
-                        // Send an AJAX request to create a new category
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', 'create_category.php', true);
-                        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                        xhr.onload = function () {
-                            if (xhr.status === 200) {
-                                // Reload the page after creating a new category
-                                location.reload();
-                            }
-                        };
-                        xhr.send();
-                    }
-
-                    function confirmDeleteCategory(categoryId) {
-                        var confirmationMessage = "Are you sure you want to delete this category (" + categoryId + ") and its products?";
-
-                        var confirmation = confirm(confirmationMessage);
-                        if (confirmation) {
-                            // Send an AJAX request to delete the category
-                            var xhr = new XMLHttpRequest();
-                            xhr.open('POST', 'update_category.php', true);
-                            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                            xhr.onload = function () {
-                                if (xhr.status === 200) {
-                                    // Reload the page after deleting the category
-                                    location.reload();
-                                } else {
-                                    // Display error message if deleting category failed
-                                    console.log('Error deleting category: ' + xhr.responseText);
-                                }
-                            };
-                            xhr.send('categoryId=' + encodeURIComponent(categoryId) + '&newCategoryName=');
-                        }
                     }
                 </script>
             </div>

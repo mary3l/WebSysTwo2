@@ -69,12 +69,24 @@
 					array_push($categories, $category);
 				}
 			}
+			//--------------------------------------------------------------------------------------------------------------
 			// Generate category links
 			echo "<ul>";
 			foreach ($categories as $category) {
-				echo "<li><a href='admin_category.php?prodcat=" . urlencode($category) . "'>$category</a></li>";
-			}
+				echo "<li>";
+				echo "<a href='admin_category.php?prodcat=" . urlencode($category) . "'>$category</a>";
 
+				// Add delete button for the category
+				echo "<button class='delete-category-btn' onclick='confirmDeleteCategory(\"" . urlencode($category) . "\")'>Delete</button>";
+
+				// Add edit button for the category
+				echo "<button class='edit-category-btn' onclick='toggleEditCategory(this)'>Edit</button>";
+
+				echo "</li>";
+			}
+			echo '<br>';
+			echo '<br>';
+			//--------------------------------------------------------------------------------------------------------------
 			// Add "New Category" button
 			echo '<div class="category">';
 			echo '<button id="new-category-btn" onclick="createNewCategory()">New Category</button>';
@@ -158,7 +170,8 @@
 							handleProductEdit(prodid);
 						}
 					}
-
+					//--------------------------------------------------------------------------------------------------------------
+					//this serves as the functionality of the insert option from the dropdown
 					function handleInsertProduct(prodid, selectElement) { // Add selectElement as a parameter
 						// Retrieve the category of the selected product
 						var prodcat = selectElement.getAttribute("data-category");
@@ -176,7 +189,8 @@
 						};
 						xhr.send("prodid=" + prodid + "&category=" + prodcat + "&option=insert");
 					}
-
+					//--------------------------------------------------------------------------------------------------------------
+					// this deletes the products from the products.php
 					function handleDeleteProduct(prodid) {
 						var confirmationMessage = "Are you sure you want to delete 'Product " + prodid + "'?";
 
@@ -197,6 +211,10 @@
 							selectElement.value = "";
 						}
 					}
+					//--------------------------------------------------------------------------------------------------------------
+					// this edits the products from the products.php
+					// this will have the pop-up modal that when edit is being clicked from the dropdown 
+					//the funtion edit will be activated
 					function handleProductEdit(prodid) {
 						// Show the edit form popup
 						document.getElementById('popup-container').style.display = 'block';
@@ -227,44 +245,8 @@
 						};
 						xhr.send();
 					}
-					function editCategoryName(categoryId) {
-						var categoryElement = document.getElementById('category-' + categoryId);
-						var categoryLink = categoryElement.querySelector('.category-link');
-						var editButton = categoryElement.querySelector('.edit-category-btn');
-
-						if (categoryLink.style.display === 'none') {
-							// Already in edit mode, save changes
-							var inputElement = categoryElement.querySelector('input');
-							var newCategoryName = inputElement.value;
-
-							if (newCategoryName.trim() !== '') {
-								// Send an AJAX request to update the category name
-								var xhr = new XMLHttpRequest();
-								xhr.open('POST', 'update_category.php', true);
-								xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-								xhr.onload = function () {
-									if (xhr.status === 200) {
-										// Reload the page after updating the category name
-										location.reload();
-									} else {
-										// Display error message if updating category name failed
-										console.log('Error updating category name: ' + xhr.responseText);
-									}
-								};
-								xhr.send('categoryId=' + encodeURIComponent(categoryId) + '&newCategoryName=' + encodeURIComponent(newCategoryName));
-							}
-						} else {
-							// Enter edit mode
-							categoryLink.style.display = 'none';
-							editButton.innerText = 'Save';
-
-							var inputElement = document.createElement('input');
-							inputElement.type = 'text';
-							inputElement.value = categoryLink.innerText;
-
-							categoryElement.appendChild(inputElement);
-						}
-					}
+					//--------------------------------------------------------------------------------------------------------------
+					// function that handles the create "New Category" button
 					function createNewCategory() {
 						// Send an AJAX request to create a new category
 						var xhr = new XMLHttpRequest();
@@ -278,28 +260,79 @@
 						};
 						xhr.send();
 					}
-
+					//--------------------------------------------------------------------------------------------------------------
+					//this function will serve as the activation for the delete button 
 					function confirmDeleteCategory(categoryId) {
-						var confirmationMessage = "Are you sure you want to delete this category (" + categoryId + ") and its products?";
+						var confirmationMessage = "Are you sure you want to delete the category '" + categoryId + "' and its products?";
 
-						var confirmation = confirm(confirmationMessage);
-						if (confirmation) {
-							// Send an AJAX request to delete the category
+						if (confirm(confirmationMessage)) {
+							// Make an AJAX request to delete the category
 							var xhr = new XMLHttpRequest();
-							xhr.open('POST', 'update_category.php', true);
-							xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-							xhr.onload = function () {
-								if (xhr.status === 200) {
-									// Reload the page after deleting the category
+							xhr.open("POST", "delete_category.php", true);
+							xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+							xhr.onreadystatechange = function () {
+								if (xhr.readyState === 4 && xhr.status === 200) {
+									// Category deleted successfully, reload the page
 									location.reload();
-								} else {
-									// Display error message if deleting category failed
-									console.log('Error deleting category: ' + xhr.responseText);
 								}
 							};
-							xhr.send('categoryId=' + encodeURIComponent(categoryId) + '&newCategoryName=');
+							xhr.send("categoryId=" + categoryId);
 						}
 					}
+					//--------------------------------------------------------------------------------------------------------------
+					function toggleEditCategory(editButton) {
+						var listItem = editButton.parentNode;
+
+						var saveButton = document.createElement('button');
+						saveButton.className = 'save-category-btn';
+						saveButton.textContent = 'Save';
+						saveButton.addEventListener('click', function () {
+							var category = listItem.querySelector('a').textContent;
+							var inputField = listItem.querySelector('input');
+							var newCategoryName = inputField.value;
+							saveCategory(category, newCategoryName);
+						});
+
+						var inputField = document.createElement('input');
+						inputField.type = 'text';
+						inputField.value = listItem.querySelector('a').textContent;
+
+						listItem.replaceChild(inputField, editButton);
+						listItem.appendChild(saveButton);
+					}
+					//--------------------------------------------------------------------------------------------------------------
+					//save function category from the edit button
+					//save function category from the edit button
+					function saveCategory(category, newCategoryName) {
+						var xhr = new XMLHttpRequest();
+						var url = 'update_category.php';
+						var params = 'category=' + encodeURIComponent(category) + '&newCategoryName=' + encodeURIComponent(newCategoryName);
+
+						xhr.open('POST', url, true);
+						xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+						xhr.onreadystatechange = function () {
+							if (xhr.readyState === XMLHttpRequest.DONE) {
+								if (xhr.status === 200) {
+									var response = xhr.responseText;
+									console.log('Response from server:', response); // Log the response received from the server
+									if (response === 'success') {
+										console.log('Category name updated successfully');
+										location.reload(); // Reload the page
+									} else {
+										// Handle error case
+										console.log('Failed to update category name');
+									}
+								} else {
+									// Handle error case
+									console.log('Failed to send request');
+								}
+							}
+						};
+
+						xhr.send(params);
+					}
+
 				</script>
 			</div>
 		</div>
