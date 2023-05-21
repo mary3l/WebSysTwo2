@@ -16,19 +16,59 @@ if (isset($_COOKIE['type']) && $_COOKIE['type'] == 'admin') {
         $status = $_POST['status'];
         $selectedDate = $_POST['date'];
 
-        // Your database connection code here
-        // ...
-
         // Update the status in the database
         $updateQuery = "UPDATE Purchase SET status='$newStatus' WHERE userid='$userId' AND prodid='$prodId'";
         $updateResult = mysqli_query($dlink, $updateQuery);
 
-        // Redirect back to the same page
-        header("Location: customers.php?status=$status&date=" . urlencode($selectedDate));
-        exit;
+        if ($updateResult) {
+            // Get the recipient (customer's user ID)
+            $recipientQuery = "SELECT userid FROM user WHERE userid = '$userId'";
+            $recipientResult = mysqli_query($dlink, $recipientQuery);
+
+            if ($recipientResult && mysqli_num_rows($recipientResult) > 0) {
+                $row = mysqli_fetch_assoc($recipientResult);
+                $recipient = $row['userid'];
+
+                // Check if the admin is not the recipient
+                $adminId = $_COOKIE['userid'];
+                if ($adminId !== $recipient) {
+                    // Get the product information
+                    $productQuery = "SELECT prodid, productname FROM products WHERE prodid = '$prodId'";
+                    $productResult = mysqli_query($dlink, $productQuery);
+
+                    if ($productResult && mysqli_num_rows($productResult) > 0) {
+                        $productRow = mysqli_fetch_assoc($productResult);
+                        $productId = $productRow['prodid'];
+                        $productName = $productRow['productname'];
+
+                        // Insert a message into the messages table
+                        $message = "Admin has changed the order status for Customer $userId. The status of the product (ID: $productId, Name: $productName) has been changed to $newStatus";
+                        $insertQuery = "INSERT INTO messages (sender, recipient, message, timestamp) VALUES ('Admin', '$recipient', '$message', NOW())";
+                        $insertResult = mysqli_query($dlink, $insertQuery);
+
+                        if ($insertResult) {
+                            mysqli_close($dlink);
+                            header("Location: customers.php");
+                            exit();
+                        } else {
+                            echo "Error inserting message: " . mysqli_error($dlink);
+                        }
+                    } else {
+                        echo "Error retrieving product information: " . mysqli_error($dlink);
+                    }
+                } else {
+                    echo "You cannot reply to your own message.";
+                }
+            } else {
+                echo "Error retrieving recipient: " . mysqli_error($dlink);
+            }
+        } else {
+            echo "Error updating status: " . mysqli_error($dlink);
+        }
+    } else {
+        echo "Invalid parameters. Please provide userid, prodid, quantity, date, and new_status.";
     }
 }
-
 
 mysqli_close($dlink);
 ?>
