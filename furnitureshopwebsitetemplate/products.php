@@ -380,6 +380,7 @@
 						</div>
 						<br>
 						<div class="row">
+							<label for="image">Current Product Image:</label>
 							<img id="current-image" src="' . $row['productimage'] . '" width="100">
 						</div>
 						<div class="col-md-6">

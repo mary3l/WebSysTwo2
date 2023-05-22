@@ -222,7 +222,7 @@
                                 document.getElementById('productname').value = productDetails.productname;
                                 document.getElementById('description').value = productDetails.description;
                                 document.getElementById('quantity').value = productDetails.quantity;
-                                document.getElementById('curprice').value = productDetails.curprice;
+                                document.getElementById('ourprice').value = productDetails.ourprice;
                                 document.getElementById('prodcat').value = productDetails.prodcat;
 
                             }
@@ -270,8 +270,8 @@
                                     type="number" min="0">
                             </div>
                             <div class="col-md-6">
-                                <label for="curprice"></label>
-                                <input class="form-control" name="curprice" id="curprice" placeholder="Current Price">
+                                <label for="ourprice"></label>
+                                <input class="form-control" name="ourprice" id="ourprice" placeholder="Current Price">
                             </div>
                         </div>
                         <br>
