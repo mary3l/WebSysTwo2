@@ -15,7 +15,6 @@ if (isset($_COOKIE['type']) && $_COOKIE['type'] == 'admin') {
         $newStatus = $_POST['new_status'];
         $status = $_POST['status'];
         $selectedDate = $_POST['date'];
-
         // Update the status in the database
         $updateQuery = "UPDATE Purchase SET status='$newStatus' WHERE userid='$userId' AND prodid='$prodId'";
         $updateResult = mysqli_query($dlink, $updateQuery);
@@ -48,7 +47,7 @@ if (isset($_COOKIE['type']) && $_COOKIE['type'] == 'admin') {
 
                         if ($insertResult) {
                             mysqli_close($dlink);
-                            header("Location: customers.php");
+                            header("Location: customers.php?status=$status&date=" . urlencode($selectedDate));
                             exit();
                         } else {
                             echo "Error inserting message: " . mysqli_error($dlink);
@@ -69,6 +68,8 @@ if (isset($_COOKIE['type']) && $_COOKIE['type'] == 'admin') {
         echo "Invalid parameters. Please provide userid, prodid, quantity, date, and new_status.";
     }
 }
+
+
 
 mysqli_close($dlink);
 ?>
